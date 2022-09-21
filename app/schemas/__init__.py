@@ -1,5 +1,6 @@
 from .charityproject import (
     CharityProjectBase,
     CharityProjectCreate,
-    CharityProjectDB
+    CharityProjectDB,
+    CharityProjectUpdate,
 )  # noqa
