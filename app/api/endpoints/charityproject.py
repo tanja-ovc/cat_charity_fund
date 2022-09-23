@@ -13,6 +13,7 @@ from app.api.validators import (
 from app.core.db import get_async_session
 from app.core.user import current_superuser
 from app.crud import charityproject_crud
+from app.services.investments import investment_project_create
 from app.schemas import (
     CharityProjectCreate, CharityProjectDB, CharityProjectUpdate
 )
@@ -33,7 +34,10 @@ async def create_new_charityproject(
     """Только для суперюзеров."""
     await check_name_duplicate(charityproject.name, session)
     new_charityproject = await charityproject_crud.create(charityproject, session)
-    return new_charityproject
+    new_charityproject_upd = await investment_project_create(
+        new_charityproject, session
+    )
+    return new_charityproject_upd
 
 
 @router.get(
