@@ -4,3 +4,8 @@ from .charityproject import (
     CharityProjectDB,
     CharityProjectUpdate,
 )  # noqa
+from .donation import (
+    DonationCreate,
+    DonationDBFull,
+    DonationDBShort,
+)  # noqa
