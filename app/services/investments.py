@@ -1,13 +1,13 @@
 from datetime import datetime
 
-from fastapi import APIRouter, Depends
+from fastapi import Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_async_session
 from app.models import CharityProject, Donation
 from app.schemas import (
-    CharityProjectCreate, DonationCreate, DonationDBFull, DonationDBShort
+    CharityProjectCreate, DonationCreate,
 )
 
 
@@ -24,12 +24,12 @@ async def investment_donation_create(
     if not projects_from_oldest:
         return donation
 
-    left_from_donation = 0
+    donation_full_amount = True
     for project in projects_from_oldest:
 
         money_needed = project.full_amount - project.invested_amount
 
-        if left_from_donation == 0:
+        if donation_full_amount:
             money_received = donation.full_amount
 
         if money_received < money_needed:
@@ -54,6 +54,7 @@ async def investment_donation_create(
             project.close_date = datetime.utcnow()
             donation.invested_amount += money_needed
             money_received -= money_needed
+            donation_full_amount = False
     
     session.add(project)
     session.add(donation)
@@ -77,12 +78,12 @@ async def investment_project_create(
     if not unused_donations:
         return project
     
-    money_needed = 0
+    zero_money_in_project = True
     for donation in unused_donations:
         
         unused_leftover = donation.full_amount - donation.invested_amount
 
-        if money_needed == 0:
+        if zero_money_in_project:
             money_needed = project.full_amount - project.invested_amount
         
         if unused_leftover < money_needed:
@@ -91,7 +92,7 @@ async def investment_project_create(
             donation.fully_invested = True
             donation.close_date = datetime.utcnow()
             money_needed -= unused_leftover
-
+            zero_money_in_project = False
 
         elif unused_leftover == money_needed:
             project.invested_amount += unused_leftover
