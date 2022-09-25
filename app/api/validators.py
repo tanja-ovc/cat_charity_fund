@@ -23,12 +23,11 @@ async def check_charityproject_exists(
 
 async def check_charityproject_investment_exists(
         charityproject_db: CharityProject,
-    ) -> None:
-        if charityproject_db.invested_amount > 0:
-            raise HTTPException(
-            status_code=405,
-            detail='Удаление проекта, в который инвестированы средства, невозможно. '
-                   'Используйте закрытие проекта вместо его удаления.'
+) -> None:
+    if charityproject_db.invested_amount > 0:
+        raise HTTPException(
+            status_code=400,
+            detail='В проект были внесены средства, не подлежит удалению!'
         )
 
 
@@ -41,29 +40,30 @@ async def check_name_duplicate(
     )
     if project_id is not None:
         raise HTTPException(
-            status_code=422,
-            detail='Переговорка с таким именем уже существует!',
+            status_code=400,
+            detail='Проект с таким именем уже существует!',
         )
+
 
 async def check_charityproject_not_closed(
     charityproject_db: CharityProject,
 ) -> None:
     if charityproject_db.close_date is not None:
         raise HTTPException(
-            status_code=405,
-            detail='Редактирование закрытого проекта невозможно.'
+            status_code=400,
+            detail='Закрытый проект нельзя редактировать!'
         )
 
 
-async def check_full_amount_not_less_than_before(
+async def check_full_amount_not_less_than_invested(
     charityproject_db: CharityProject,
     update_info: CharityProjectUpdate,
 ) -> None:
     db_invested_amount = charityproject_db.invested_amount
-    if (update_info.full_amount and
-        update_info.full_amount < db_invested_amount):
+    new_full_amount = update_info.full_amount
+    if new_full_amount and new_full_amount < db_invested_amount:
         raise HTTPException(
-            status_code=405,
+            status_code=422,
             detail='Сумма, требующаяся для проекта, не может стать меньше '
                    'уже вложенной в проект.'
         )

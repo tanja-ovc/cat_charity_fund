@@ -17,10 +17,10 @@ async def investment_donation_create(
 ):
     projects_from_oldest = await session.execute(
         select(CharityProject).where(
-            CharityProject.close_date == None).order_by('create_date')
+            CharityProject.close_date is None).order_by('create_date')
     )
     projects_from_oldest = projects_from_oldest.scalars().all()
-    
+
     if not projects_from_oldest:
         return donation
 
@@ -55,7 +55,7 @@ async def investment_donation_create(
             donation.invested_amount += money_needed
             money_received -= money_needed
             donation_full_amount = False
-    
+
     session.add(project)
     session.add(donation)
     await session.commit()
@@ -71,21 +71,21 @@ async def investment_project_create(
 ):
     unused_donations = await session.execute(
         select(Donation).where(
-            Donation.close_date == None).order_by('create_date')
+            Donation.close_date is None).order_by('create_date')
     )
     unused_donations = unused_donations.scalars().all()
 
     if not unused_donations:
         return project
-    
+
     zero_money_in_project = True
     for donation in unused_donations:
-        
+
         unused_leftover = donation.full_amount - donation.invested_amount
 
         if zero_money_in_project:
             money_needed = project.full_amount - project.invested_amount
-        
+
         if unused_leftover < money_needed:
             project.invested_amount += unused_leftover
             donation.invested_amount += unused_leftover

@@ -3,18 +3,13 @@ from typing import List
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-# from app.api.validators import (
-#     # check_charityproject_not_closed,
-#     # check_charityproject_exists,
-#     # check_charityproject_investment_exists,
-#     # check_full_amount_not_less_than_before,
-#     # check_name_duplicate
-# )
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.crud import donation_crud
 from app.models import User
-from app.services.investments import investment_donation_create
+from app.services.investments import (
+    investment_donation_create,
+)
 from app.schemas import (
     DonationCreate, DonationDBFull, DonationDBShort
 )
@@ -34,7 +29,7 @@ async def create_new_donation(
         user: User = Depends(current_user),
 ):
     """Только для зарегистрированных пользователей."""
-    
+
     new_donation = await donation_crud.create(
         donation, session, user
     )

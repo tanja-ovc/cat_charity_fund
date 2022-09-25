@@ -1,10 +1,10 @@
-from .charityproject import (
+from .charityproject import (  # noqa
     CharityProjectBase,
     CharityProjectCreate,
     CharityProjectDB,
     CharityProjectUpdate,
 )  # noqa
-from .donation import (
+from .donation import (   # noqa
     DonationCreate,
     DonationDBFull,
     DonationDBShort,

@@ -8,7 +8,7 @@ from app.models import CharityProject
 
 
 class CRUDCharityProject(CRUDBase):
-    
+
     async def get_charityproject_id_by_name(
             self,
             charityproject_name: str,

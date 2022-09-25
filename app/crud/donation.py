@@ -1,5 +1,3 @@
-# from typing import Optional
-
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -8,7 +6,7 @@ from app.models import Donation, User
 
 
 class CRUDDonation(CRUDBase):
-    
+
     async def get_by_user(
         self,
         session: AsyncSession,
