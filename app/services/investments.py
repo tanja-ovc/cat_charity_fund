@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import sqlalchemy as sa
 from fastapi import Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -17,7 +18,7 @@ async def investment_donation_create(
 ):
     projects_from_oldest = await session.execute(
         select(CharityProject).where(
-            CharityProject.close_date is None).order_by('create_date')
+            CharityProject.close_date == sa.null()).order_by('create_date')
     )
     projects_from_oldest = projects_from_oldest.scalars().all()
 
@@ -71,7 +72,7 @@ async def investment_project_create(
 ):
     unused_donations = await session.execute(
         select(Donation).where(
-            Donation.close_date is None).order_by('create_date')
+            Donation.close_date == sa.null()).order_by('create_date')
     )
     unused_donations = unused_donations.scalars().all()
 
